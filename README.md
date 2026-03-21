@@ -35,7 +35,7 @@ A pasta de saída é `dist/` (ex.: deploy em Render como **Static Site**).
 | 7º | 2 |
 | 8º | 1 |
 
-O **ranking geral** soma os pontos de cada faculdade em **todas** as modalidades já completamente preenchidas (final + 3º lugar definidos).
+O **ranking geral** soma os pontos de cada faculdade em **todas** as modalidades já completamente preenchidas (final definida). Não há disputa de 3º lugar: quem perdeu pro campeão na semi fica em 3º, quem perdeu pro vice fica em 4º.
 
 ## Classificação do 5º ao 8º lugar
 

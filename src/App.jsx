@@ -39,35 +39,26 @@ function MatchCard({ team1, team2, winner, onSelectWinner }) {
   )
 }
 
-function ThirdPlaceLogos({ team1, team2, winner, onSelect }) {
-  const t1 = getTeam(team1)
-  const t2 = getTeam(team2)
+function ThirdFourthDisplay({ third, fourth }) {
+  const t3 = getTeam(third)
+  const t4 = getTeam(fourth)
   return (
-    <div className="mini-match logo-row">
-      <button
-        type="button"
-        className={`team-slot logo-only mini ${winner === team1 ? 'winner' : ''}`}
-        onClick={() => onSelect(team1)}
-        title={team1}
-      >
-        <img src={t1?.logo} alt="" className={`team-logo ${t1?.logoClass || ''}`} />
-      </button>
-      <span className="vs">×</span>
-      <button
-        type="button"
-        className={`team-slot logo-only mini ${winner === team2 ? 'winner' : ''}`}
-        onClick={() => onSelect(team2)}
-        title={team2}
-      >
-        <img src={t2?.logo} alt="" className={`team-logo ${t2?.logoClass || ''}`} />
-      </button>
+    <div className="mini-match logo-row third-fourth">
+      <div className="place-slot" title={third}>
+        <span className="place-label">3º</span>
+        <img src={t3?.logo} alt="" className={`team-logo ${t3?.logoClass || ''}`} />
+      </div>
+      <div className="place-slot" title={fourth}>
+        <span className="place-label">4º</span>
+        <img src={t4?.logo} alt="" className={`team-logo ${t4?.logoClass || ''}`} />
+      </div>
     </div>
   )
 }
 
 function Bracket({ modality, state, onUpdate }) {
   const { left, right } = modality
-  const { qf1, qf2, qf3, qf4, sf1, sf2, final: finalWinner, third } = state
+  const { qf1, qf2, qf3, qf4, sf1, sf2, final: finalWinner } = state
 
   const sf1Teams = useMemo(() => {
     if (qf1 && qf2) return [qf1, qf2]
@@ -79,12 +70,14 @@ function Bracket({ modality, state, onUpdate }) {
     return [null, null]
   }, [qf3, qf4])
 
-  const thirdPlaceTeams = useMemo(() => {
-    if (!sf1 || !sf2 || !sf1Teams[0] || !sf1Teams[1] || !sf2Teams[0] || !sf2Teams[1]) return [null, null]
+  const thirdAndFourth = useMemo(() => {
+    if (!sf1 || !sf2 || !finalWinner || !sf1Teams[0] || !sf1Teams[1] || !sf2Teams[0] || !sf2Teams[1]) return null
     const leftLoser = sf1 === sf1Teams[0] ? sf1Teams[1] : sf1Teams[0]
     const rightLoser = sf2 === sf2Teams[0] ? sf2Teams[1] : sf2Teams[0]
-    return [leftLoser, rightLoser]
-  }, [sf1, sf2, sf1Teams, sf2Teams])
+    const third = finalWinner === sf1 ? leftLoser : rightLoser
+    const fourth = finalWinner === sf1 ? rightLoser : leftLoser
+    return { third, fourth }
+  }, [sf1, sf2, finalWinner, sf1Teams, sf2Teams])
 
   const finalTeams = useMemo(() => {
     if (sf1 && sf2) return [sf1, sf2]
@@ -113,8 +106,8 @@ function Bracket({ modality, state, onUpdate }) {
           <div className="advance-slot empty large"><span className="trophy">🏆</span></div>
         )}
         <div className="third-place">
-          {thirdPlaceTeams[0] && thirdPlaceTeams[1] ? (
-            <ThirdPlaceLogos team1={thirdPlaceTeams[0]} team2={thirdPlaceTeams[1]} winner={third} onSelect={(w) => onUpdate('third', w)} />
+          {thirdAndFourth ? (
+            <ThirdFourthDisplay third={thirdAndFourth.third} fourth={thirdAndFourth.fourth} />
           ) : (
             <span className="waiting">—</span>
           )}
@@ -187,14 +180,17 @@ function GlobalRanking({ modalityState }) {
 }
 
 /**
+ * Não há disputa de 3º lugar: quem perdeu pro campeão na semi fica em 3º,
+ * quem perdeu pro vice na semi fica em 4º.
+ *
  * 5º–8º: cada perdedor das quartas perdeu para um dos 4 vencedores das quartas,
  * que acabam em 1º–4º. Quem perdeu para o campeão → 5º; para o vice → 6º;
  * para o 3º → 7º; para o 4º → 8º.
  */
 function computeModalityStandings(state, modality) {
   const { left, right } = modality
-  const { qf1, qf2, qf3, qf4, sf1, sf2, final: finalWinner, third } = state
-  if (!finalWinner || !third) return []
+  const { qf1, qf2, qf3, qf4, sf1, sf2, final: finalWinner } = state
+  if (!finalWinner) return []
   if (!sf1 || !sf2) return []
 
   const finalists = [sf1, sf2].filter(Boolean)
@@ -203,7 +199,8 @@ function computeModalityStandings(state, modality) {
 
   const leftLoser = sf1 === qf1 ? qf2 : qf1
   const rightLoser = sf2 === qf3 ? qf4 : qf3
-  const fourth = third === leftLoser ? rightLoser : leftLoser
+  const third = finalWinner === sf1 ? leftLoser : rightLoser
+  const fourth = finalWinner === sf1 ? rightLoser : leftLoser
 
   const placed = {}
   placed[1] = finalWinner
@@ -261,16 +258,13 @@ function App() {
       if (key === 'qf1' || key === 'qf2') {
         delete next.sf1
         delete next.final
-        delete next.third
       }
       if (key === 'qf3' || key === 'qf4') {
         delete next.sf2
         delete next.final
-        delete next.third
       }
       if (key === 'sf1' || key === 'sf2') {
         delete next.final
-        delete next.third
       }
       return { ...prev, [activeModality]: next }
     })

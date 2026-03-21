@@ -397,6 +397,30 @@
   font-size: 0.85rem;
 }
 
+.third-fourth {
+  gap: 1rem;
+}
+
+.place-slot {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.place-slot .place-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--ink-muted);
+  min-width: 1.5rem;
+}
+
+.place-slot .team-logo {
+  width: 32px;
+  height: 32px;
+  min-width: 32px;
+  border-radius: 4px;
+}
+
 /* Ranking */
 .ranking-section {
   width: 100%;
