@@ -4,7 +4,7 @@ export const TEAMS = {
   Mackenzie: { id: 'mackenzie', name: 'Mackenzie', logo: '/economack.jpg' },
   USP: { id: 'usp', name: 'USP', logo: '/usp.jpg' },
   FECAP: { id: 'fecap', name: 'FECAP', logo: '/fecap.jpg', logoClass: 'large' },
-  FGV: { id: 'fgv', name: 'FGV', logo: '/fgv.jpg', logoClass: 'rotate' },
+  FGV: { id: 'fgv', name: 'FGV', logo: '/fgv.jpg'},
   IBMEC: { id: 'ibmec', name: 'IBMEC', logo: '/ibmec.jpg' },
   PUC: { id: 'puc', name: 'PUC', logo: '/puc.png', logoClass: 'large' },
   ESPM: { id: 'espm', name: 'ESPM', logo: '/espm.jpg', logoClass: 'large' },

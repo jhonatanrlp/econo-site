@@ -1,8 +1,31 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect, useCallback } from 'react'
 import { TEAMS, POINTS_BY_PLACE, MODALITIES } from './data/teams'
 import './App.css'
 
 const getTeam = (name) => TEAMS[name]
+
+function IntroModal({ onClose }) {
+  const handleBackdropClick = (e) => {
+    if (e.target === e.currentTarget) onClose()
+  }
+
+  return (
+    <div className="intro-overlay" onClick={handleBackdropClick} role="dialog" aria-modal="true" aria-labelledby="intro-title">
+      <div className="intro-modal">
+        <button type="button" className="intro-close" onClick={onClose} aria-label="Fechar">×</button>
+        <h2 id="intro-title">Como funciona</h2>
+        <div className="intro-content">
+          <p>Este simulador permite registrar os resultados das modalidades do ECONO 2026 e acompanhar o ranking geral.</p>
+          <p><strong>Chaveamento:</strong> As quartas de final alimentam as semifinais, que definem a final. Clique no logo do vencedor em cada jogo para avançar.</p>
+          <p><strong>3º e 4º lugar:</strong> Não há disputa — quem perdeu pro campeão na semi fica em 3º; quem perdeu pro vice fica em 4º.</p>
+          <p><strong>Pontuação:</strong> 1º = 13 pts, 2º = 10, 3º = 8, 4º = 6, e assim por diante. O ranking geral soma os pontos de todas as modalidades.</p>
+          <p><strong>Reiniciar</strong> zera todos os chaveamentos.</p>
+        </div>
+        <p className="intro-hint">Clique fora ou no × para fechar</p>
+      </div>
+    </div>
+  )
+}
 
 function MatchCard({ team1, team2, winner, onSelectWinner }) {
   const t1 = getTeam(team1)
@@ -244,9 +267,25 @@ function computeModalityStandings(state, modality) {
   }))
 }
 
+const INTRO_DISMISSED_KEY = 'econo-intro-dismissed'
+
 function App() {
   const [activeModality, setActiveModality] = useState(MODALITIES[0].id)
   const [modalityState, setModalityState] = useState({})
+  const [showIntro, setShowIntro] = useState(() => !sessionStorage.getItem(INTRO_DISMISSED_KEY))
+
+  const closeIntro = useCallback(() => {
+    setShowIntro(false)
+    sessionStorage.setItem(INTRO_DISMISSED_KEY, '1')
+  }, [])
+
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (showIntro && e.key === 'Escape') closeIntro()
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [showIntro, closeIntro])
 
   const modality = MODALITIES.find((m) => m.id === activeModality)
   const state = modalityState[activeModality] || {}
@@ -288,6 +327,7 @@ function App() {
 
   return (
     <div className="app">
+      {showIntro && <IntroModal onClose={closeIntro} />}
       <header className="header">
         <div className="header-inner">
           <div className="logo">
