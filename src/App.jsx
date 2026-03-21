@@ -186,27 +186,59 @@ function GlobalRanking({ modalityState }) {
   )
 }
 
+/**
+ * 5º–8º: cada perdedor das quartas perdeu para um dos 4 vencedores das quartas,
+ * que acabam em 1º–4º. Quem perdeu para o campeão → 5º; para o vice → 6º;
+ * para o 3º → 7º; para o 4º → 8º.
+ */
 function computeModalityStandings(state, modality) {
   const { left, right } = modality
   const { qf1, qf2, qf3, qf4, sf1, sf2, final: finalWinner, third } = state
   if (!finalWinner || !third) return []
+  if (!sf1 || !sf2) return []
 
-  const runnerUp = sf1 === finalWinner ? sf2 : sf1
+  const finalists = [sf1, sf2].filter(Boolean)
+  const runnerUp = finalists.find((t) => t !== finalWinner) ?? null
+  if (!runnerUp) return []
+
   const leftLoser = sf1 === qf1 ? qf2 : qf1
   const rightLoser = sf2 === qf3 ? qf4 : qf3
+  const fourth = third === leftLoser ? rightLoser : leftLoser
 
   const placed = {}
   placed[1] = finalWinner
   placed[2] = runnerUp
   placed[3] = third
-  placed[4] = third === leftLoser ? rightLoser : leftLoser
-  const qfLosers = [
-    qf1 === left[0][0] ? left[0][1] : left[0][0],
-    qf2 === left[1][0] ? left[1][1] : left[1][0],
-    qf3 === right[0][0] ? right[0][1] : right[0][0],
-    qf4 === right[1][0] ? right[1][1] : right[1][0],
+  placed[4] = fourth
+
+  const finalPlaceByTeam = {
+    [finalWinner]: 1,
+    [runnerUp]: 2,
+    [third]: 3,
+    [fourth]: 4,
+  }
+
+  const qfMatches = [
+    [left[0][0], left[0][1], qf1],
+    [left[1][0], left[1][1], qf2],
+    [right[0][0], right[0][1], qf3],
+    [right[1][0], right[1][1], qf4],
   ]
-  qfLosers.forEach((name, i) => { placed[5 + i] = name })
+
+  const qfLoserRows = qfMatches.map(([t1, t2, winner]) => ({
+    loser: winner === t1 ? t2 : t1,
+    eliminatedBy: winner,
+  }))
+
+  qfLoserRows.sort((a, b) => {
+    const ra = finalPlaceByTeam[a.eliminatedBy] ?? 99
+    const rb = finalPlaceByTeam[b.eliminatedBy] ?? 99
+    return ra - rb
+  })
+
+  qfLoserRows.forEach((row, i) => {
+    placed[5 + i] = row.loser
+  })
 
   return Object.entries(placed).map(([place, name]) => ({
     place: parseInt(place, 10),
