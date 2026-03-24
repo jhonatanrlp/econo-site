@@ -582,6 +582,189 @@
   color: var(--ink-muted);
 }
 
+.stacked-sections {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.stacked-sections h3 {
+  margin: 0 0 0.5rem;
+  color: var(--ink);
+}
+
+.special-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.rugby-grid {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.rugby-grid.compact {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.55rem;
+}
+
+.rugby-row {
+  display: grid;
+  grid-template-columns: 32px 1fr auto;
+  align-items: center;
+  gap: 0.5rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  padding: 0.5rem 0.65rem;
+  background: var(--surface);
+}
+
+.rugby-card {
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  padding: 0.55rem 0.5rem;
+  display: flex;
+  justify-content: center;
+}
+
+.rugby-actions {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.rugby-actions button {
+  border: 1px solid var(--line);
+  background: var(--surface-2);
+  border-radius: 8px;
+  font-size: 0.75rem;
+  padding: 0.3rem 0.5rem;
+  cursor: pointer;
+}
+
+.rugby-picks {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.pick-logo {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-pill);
+  border: 2px solid var(--line);
+  background: var(--surface-2);
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.pick-logo .team-logo {
+  width: 30px;
+  height: 30px;
+  min-width: 30px;
+  border-radius: var(--radius-pill);
+  object-fit: contain;
+}
+
+.pick-logo .team-logo.large {
+  width: 36px;
+  height: 36px;
+  min-width: 36px;
+}
+
+.pick-logo.active {
+  border-color: var(--brand);
+  box-shadow: 0 0 0 2px rgba(223, 149, 6, 0.25);
+}
+
+.pick-draw {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  background: var(--surface-2);
+  color: var(--ink-muted);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.pick-draw.active {
+  border-color: var(--brand);
+  color: var(--brand-deep);
+  background: rgba(223, 149, 6, 0.14);
+}
+
+.pick-vs {
+  color: var(--ink-muted);
+  font-size: 0.85rem;
+}
+
+.jj-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.55rem;
+}
+
+.jj-card {
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  padding: 0.55rem 0.5rem;
+  display: flex;
+  justify-content: center;
+}
+
+.jj-picks {
+  justify-content: center;
+}
+
+.rugby-finals h4 {
+  margin: 0.5rem 0;
+}
+
+.xadrez-grid {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.xadrez-row {
+  display: grid;
+  grid-template-columns: 1fr 120px;
+  align-items: center;
+  gap: 0.5rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  padding: 0.5rem 0.65rem;
+  background: var(--surface);
+}
+
+.xadrez-row input {
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 0.4rem 0.5rem;
+}
+
+.xadrez-grid.blocks .block {
+  grid-template-columns: 40px 1fr 24px;
+  cursor: grab;
+  user-select: none;
+}
+
+.xadrez-grid.blocks .block.dragging {
+  opacity: 0.55;
+}
+
+.drag-handle {
+  text-align: right;
+  color: var(--ink-muted);
+  font-weight: 700;
+}
+
 /* Responsivo: navegação em cima */
 @media (max-width: 900px) {
   .layout {
@@ -617,6 +800,14 @@
     padding: 1rem;
   }
 
+  .jj-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .rugby-grid.compact {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .bracket-horizontal {
     flex-direction: column;
     align-items: stretch;
@@ -630,5 +821,15 @@
   .bracket-column {
     width: 100% !important;
     min-width: 100% !important;
+  }
+}
+
+@media (max-width: 560px) {
+  .jj-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .rugby-grid.compact {
+    grid-template-columns: 1fr;
   }
 }
