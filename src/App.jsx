@@ -3,6 +3,7 @@ import { TEAMS, POINTS_BY_PLACE, MODALITIES } from './data/teams'
 import './App.css'
 
 const INTRO_DISMISSED_KEY = 'econo-intro-dismissed'
+const SCENARIOS_STORAGE_KEY = 'econo-scenarios-v1'
 const TEAM_NAMES = Object.keys(TEAMS)
 const DEFAULT_GROUP_A = TEAM_NAMES.slice(0, 4)
 const DEFAULT_GROUP_B = TEAM_NAMES.slice(4, 8)
@@ -61,6 +62,24 @@ const createDefaultStateForModality = (modality) => {
     }
   }
   return {}
+}
+
+const createEmptyAppState = () => {
+  const initial = {}
+  ALL_MODALITIES.forEach((m) => { initial[m.id] = createDefaultStateForModality(m) })
+  return initial
+}
+
+const readSavedScenarios = () => {
+  try {
+    const raw = localStorage.getItem(SCENARIOS_STORAGE_KEY)
+    if (!raw) return []
+    const parsed = JSON.parse(raw)
+    if (!Array.isArray(parsed)) return []
+    return parsed.filter((item) => item && typeof item.name === 'string' && item.modalityState)
+  } catch {
+    return []
+  }
 }
 
 function IntroModal({ onClose }) {
@@ -431,12 +450,11 @@ function GlobalRanking({ modalityState }) {
 
 function App() {
   const [activeModality, setActiveModality] = useState(ALL_MODALITIES[0].id)
-  const [modalityState, setModalityState] = useState(() => {
-    const initial = {}
-    ALL_MODALITIES.forEach((m) => { initial[m.id] = createDefaultStateForModality(m) })
-    return initial
-  })
+  const [modalityState, setModalityState] = useState(() => createEmptyAppState())
   const [showIntro, setShowIntro] = useState(() => !sessionStorage.getItem(INTRO_DISMISSED_KEY))
+  const [savedScenarios, setSavedScenarios] = useState(() => readSavedScenarios())
+  const [scenarioName, setScenarioName] = useState('')
+  const [selectedScenarioId, setSelectedScenarioId] = useState('')
 
   const closeIntro = useCallback(() => {
     setShowIntro(false)
@@ -499,9 +517,56 @@ function App() {
   }
 
   const handleReset = () => {
-    const initial = {}
-    ALL_MODALITIES.forEach((m) => { initial[m.id] = createDefaultStateForModality(m) })
-    setModalityState(initial)
+    setModalityState(createEmptyAppState())
+  }
+
+  const persistScenarios = (nextScenarios) => {
+    setSavedScenarios(nextScenarios)
+    localStorage.setItem(SCENARIOS_STORAGE_KEY, JSON.stringify(nextScenarios))
+  }
+
+  const handleSaveScenario = () => {
+    const cleanName = scenarioName.trim()
+    const now = Date.now()
+    const selectedScenario = savedScenarios.find((s) => s.id === selectedScenarioId) || null
+
+    // Se um cenário estiver selecionado, salva por cima dele.
+    if (selectedScenario) {
+      const updated = {
+        ...selectedScenario,
+        name: cleanName || selectedScenario.name,
+        modalityState,
+        updatedAt: now,
+      }
+      const next = savedScenarios.map((s) => (s.id === selectedScenario.id ? updated : s))
+      persistScenarios(next)
+      setSelectedScenarioId(updated.id)
+      setScenarioName('')
+      return
+    }
+
+    // Sem cenário selecionado: cria novo (ou atualiza por nome, para evitar duplicados).
+    if (!cleanName) return
+    const existingIdx = savedScenarios.findIndex((s) => s.name.toLowerCase() === cleanName.toLowerCase())
+    const record = { id: existingIdx >= 0 ? savedScenarios[existingIdx].id : `sc-${now}`, name: cleanName, modalityState, updatedAt: now }
+    const next = existingIdx >= 0 ? savedScenarios.map((s, i) => (i === existingIdx ? record : s)) : [record, ...savedScenarios]
+    persistScenarios(next)
+    setSelectedScenarioId(record.id)
+    setScenarioName('')
+  }
+
+  const handleLoadScenario = () => {
+    const selected = savedScenarios.find((s) => s.id === selectedScenarioId)
+    if (!selected) return
+    setModalityState(selected.modalityState)
+  }
+
+  const handleDeleteScenario = () => {
+    if (!selectedScenarioId) return
+    const next = savedScenarios.filter((s) => s.id !== selectedScenarioId)
+    persistScenarios(next)
+    setModalityState(createEmptyAppState())
+    setSelectedScenarioId('')
   }
 
   const champion = useMemo(() => {
@@ -524,6 +589,21 @@ function App() {
           <div className="header-center">
             <p className="subtitle">Controle de resultados</p>
             <div className="champion-badge">Campeão atual do ranking: <strong>{champion || '—'}</strong></div>
+            <a
+              href="https://github.com/jhonatanrlp"
+              className="creator-link"
+              target="_blank"
+              rel="noopener noreferrer"
+              title="GitHub — Jhonatan Ramos"
+            >
+              <svg className="creator-github" viewBox="0 0 24 24" aria-hidden="true">
+                <path
+                  fill="currentColor"
+                  d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"
+                />
+              </svg>
+              <span>Criado por Jhonatan Ramos</span>
+            </a>
           </div>
           <button type="button" className="btn-reset" onClick={handleReset}>Reiniciar</button>
         </div>
@@ -545,6 +625,24 @@ function App() {
         <main className="main">
           <div className="main-inner">
             <h1 className="page-title">{modality.fullName}</h1>
+            <div className="scenario-bar">
+              <input
+                type="text"
+                className="scenario-input"
+                placeholder="Nome do cenario (ex: realista)"
+                value={scenarioName}
+                onChange={(e) => setScenarioName(e.target.value)}
+              />
+              <button type="button" className="scenario-btn" onClick={handleSaveScenario}>Salvar</button>
+              <select className="scenario-select" value={selectedScenarioId} onChange={(e) => setSelectedScenarioId(e.target.value)}>
+                <option value="">Cenarios salvos</option>
+                {savedScenarios.map((s) => (
+                  <option key={s.id} value={s.id}>{s.name}</option>
+                ))}
+              </select>
+              <button type="button" className="scenario-btn" onClick={handleLoadScenario} disabled={!selectedScenarioId}>Carregar</button>
+              <button type="button" className="scenario-btn danger" onClick={handleDeleteScenario} disabled={!selectedScenarioId}>Excluir</button>
+            </div>
             <div className="bracket-wrapper">
               {modality.type === 'singleElimination' && (
                 <SingleElimBracket modality={modality} state={state} onUpdate={handleSingleElimUpdate} />

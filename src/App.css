@@ -284,6 +284,52 @@
   color: var(--ink);
 }
 
+.scenario-bar {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  flex-wrap: wrap;
+  margin: 0 0 0.9rem;
+}
+
+.scenario-input,
+.scenario-select {
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--surface-2);
+  padding: 0.45rem 0.6rem;
+  font-size: 0.82rem;
+  color: var(--ink);
+}
+
+.scenario-input {
+  min-width: 220px;
+}
+
+.scenario-select {
+  min-width: 170px;
+}
+
+.scenario-btn {
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--surface-2);
+  color: var(--ink);
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 0.42rem 0.65rem;
+  cursor: pointer;
+}
+
+.scenario-btn.danger {
+  color: #8f2a2a;
+}
+
+.scenario-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 /* Bracket */
 .bracket-wrapper {
   margin-bottom: 1.75rem;
