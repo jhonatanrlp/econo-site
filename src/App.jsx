@@ -12,6 +12,8 @@ const SPECIAL_MODALITIES = [
   { id: 'jj', name: 'JJ', fullName: 'Jiu-Jitsu', type: 'jiuJitsu' },
   { id: 'rug', name: 'RUG', fullName: 'Rugby', type: 'rugby' },
   { id: 'xad', name: 'XAD', fullName: 'Xadrez', type: 'xadrez' },
+  { id: 'ntm', name: 'NTM', fullName: 'Natação Masculina', type: 'xadrez'},
+  { id: 'ntf', name: 'NTF', fullName: 'Natação Feminina', type: 'xadrez'},
 ]
 
 const ALL_MODALITIES = [...MODALITIES.map((m) => ({ ...m, type: 'singleElimination' })), ...SPECIAL_MODALITIES]
