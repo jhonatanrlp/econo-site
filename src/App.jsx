@@ -5,15 +5,15 @@ import './App.css'
 const INTRO_DISMISSED_KEY = 'econo-intro-dismissed'
 const SCENARIOS_STORAGE_KEY = 'econo-scenarios-v1'
 const TEAM_NAMES = Object.keys(TEAMS)
-const DEFAULT_GROUP_A = TEAM_NAMES.slice(0, 4)
-const DEFAULT_GROUP_B = TEAM_NAMES.slice(4, 8)
+const DEFAULT_GROUP_A = ['FGV', 'FECAP', 'PUC', 'IBMEC']
+const DEFAULT_GROUP_B = ['Insper', 'USP', 'Mackenzie', 'ESPM']
 
 const SPECIAL_MODALITIES = [
   { id: 'jj', name: 'JJ', fullName: 'Jiu-Jitsu', type: 'jiuJitsu' },
   { id: 'rug', name: 'RUG', fullName: 'Rugby', type: 'rugby' },
   { id: 'xad', name: 'XAD', fullName: 'Xadrez', type: 'xadrez' },
-  { id: 'ntm', name: 'NTM', fullName: 'Natação Masculina', type: 'xadrez'},
-  { id: 'ntf', name: 'NTF', fullName: 'Natação Feminina', type: 'xadrez'},
+  { id: 'ntm', name: 'NTM', fullName: 'Natação Masculina', type: 'natacao'},
+  { id: 'ntf', name: 'NTF', fullName: 'Natação Feminina', type: 'natacao'},
 ]
 
 const ALL_MODALITIES = [...MODALITIES.map((m) => ({ ...m, type: 'singleElimination' })), ...SPECIAL_MODALITIES]
@@ -58,6 +58,12 @@ const createDefaultStateForModality = (modality) => {
     }
   }
   if (modality.type === 'xadrez') {
+    return {
+      ranking: ['USP', 'FGV', 'Mackenzie', 'FECAP', 'PUC', 'IBMEC', 'Insper', 'ESPM'].map((teamName) => ({ teamName })),
+      touched: true,
+    }
+  }
+  if (modality.type === 'natacao') {
     return {
       ranking: TEAM_NAMES.map((teamName) => ({ teamName })),
       touched: false,
@@ -288,7 +294,27 @@ function JiuJitsuEditor({ state, onUpdateMatch }) {
   )
 }
 
-function XadrezEditor({ state, onStartDrag, onDropAt, draggingTeam }) {
+function XadrezDisplay({ state }) {
+  return (
+    <div className="ranking-panel special-panel">
+      <h3>Ranking Final do Xadrez</h3>
+      <p className="ranking-desc">Ranking definido como final - sem alterações possíveis</p>
+      <div className="xadrez-grid blocks">
+        {state.ranking.map((row, idx) => (
+          <div
+            key={row.teamName}
+            className="xadrez-row block"
+          >
+            <span>{idx + 1}º</span>
+            <span>{row.teamName}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+function NatacaoEditor({ state, onStartDrag, onDropAt, draggingTeam }) {
   return (
     <div className="ranking-panel special-panel">
       <h3>Ranking em blocos</h3>
@@ -313,6 +339,8 @@ function XadrezEditor({ state, onStartDrag, onDropAt, draggingTeam }) {
     </div>
   )
 }
+
+
 
 function computeSingleElimStandings(state, modality) {
   const { left, right } = modality
@@ -404,12 +432,18 @@ function computeXadrezStandings(state) {
   return (state.ranking || []).map((r, i) => ({ place: i + 1, teamName: r.teamName, points: POINTS_BY_PLACE[i + 1] || 0 }))
 }
 
+function computeNatacaoStandings(state) {
+  if (!state?.touched) return []
+  return (state.ranking || []).map((r, i) => ({ place: i + 1, teamName: r.teamName, points: POINTS_BY_PLACE[i + 1] || 0 }))
+}
+
 function computeStandings(modality, state) {
   if (!modality) return []
   if (modality.type === 'singleElimination') return computeSingleElimStandings(state, modality)
   if (modality.type === 'jiuJitsu') return computeJiuJitsuStandings(state)
   if (modality.type === 'rugby') return computeRugbyStandings(state)
   if (modality.type === 'xadrez') return computeXadrezStandings(state)
+  if (modality.type === 'natacao') return computeNatacaoStandings(state)
   return []
 }
 
@@ -505,7 +539,7 @@ function App() {
 
   const [draggingTeam, setDraggingTeam] = useState('')
 
-  const handleXadrezDropAt = (targetIdx) => {
+  const handleNatacaDropAt = (targetIdx) => {
     if (!draggingTeam) return
     setModalityState((prev) => {
       const ranking = [...prev[activeModality].ranking]
@@ -658,11 +692,16 @@ function App() {
                 />
               )}
               {modality.type === 'xadrez' && (
-                <XadrezEditor
+                <XadrezDisplay
+                  state={state}
+                />
+              )}
+              {modality.type === 'natacao' && (
+                <NatacaoEditor
                   state={state}
                   draggingTeam={draggingTeam}
                   onStartDrag={setDraggingTeam}
-                  onDropAt={handleXadrezDropAt}
+                  onDropAt={handleNatacaDropAt}
                 />
               )}
             </div>
