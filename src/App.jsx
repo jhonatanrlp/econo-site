@@ -123,13 +123,19 @@ function MatchCard({ team1, team2, winner, onSelectWinner }) {
   return (
     <div className="match-card">
       <div className="match-teams">
-        <button type="button" className={`team-slot logo-only ${is1Winner ? 'winner' : ''}`} onClick={() => onSelectWinner(team1)} title={team1}>
-          <img src={t1?.logo} alt="" className={`team-logo ${t1?.logoClass || ''}`} />
-        </button>
+        <div className="team-slot-wrap">
+          <button type="button" className={`team-slot logo-only ${is1Winner ? 'winner' : ''}`} onClick={() => onSelectWinner(team1)} title={team1}>
+            <img src={t1?.logo} alt="" className={`team-logo ${t1?.logoClass || ''}`} />
+          </button>
+          <span className="slot-name">{team1}</span>
+        </div>
         <span className="vs">×</span>
-        <button type="button" className={`team-slot logo-only ${is2Winner ? 'winner' : ''}`} onClick={() => onSelectWinner(team2)} title={team2}>
-          <img src={t2?.logo} alt="" className={`team-logo ${t2?.logoClass || ''}`} />
-        </button>
+        <div className="team-slot-wrap">
+          <button type="button" className={`team-slot logo-only ${is2Winner ? 'winner' : ''}`} onClick={() => onSelectWinner(team2)} title={team2}>
+            <img src={t2?.logo} alt="" className={`team-logo ${t2?.logoClass || ''}`} />
+          </button>
+          <span className="slot-name">{team2}</span>
+        </div>
       </div>
     </div>
   )
@@ -170,6 +176,7 @@ function SingleElimBracket({ modality, state, onUpdate }) {
   }, [sf1, sf2, finalWinner, sf1Teams, sf2Teams])
 
   return (
+    <div className="bracket-scroll">
     <div className="bracket-horizontal">
       <div className="bracket-column quartas-col">
         <MatchCard team1={left[0][0]} team2={left[0][1]} winner={qf1} onSelectWinner={(w) => onUpdate('qf1', w)} />
@@ -202,6 +209,7 @@ function SingleElimBracket({ modality, state, onUpdate }) {
         <MatchCard team1={right[1][0]} team2={right[1][1]} winner={qf4} onSelectWinner={(w) => onUpdate('qf4', w)} />
       </div>
     </div>
+    </div>
   )
 }
 
@@ -218,14 +226,17 @@ function RugbyEditor({ state, onUpdateMatch, onSetFinals }) {
         {state.matches.map((m) => (
           <div key={m.id} className="rugby-card" title={`Grupo ${m.group}: ${m.home} x ${m.away}`}>
             <div className="rugby-picks">
-              <button
-                type="button"
-                className={`pick-logo ${m.result === 'home' ? 'active' : ''}`}
-                title={`${m.home} vence`}
-                onClick={() => onUpdateMatch(m.id, { result: m.result === 'home' ? '' : 'home' })}
-              >
-                <img src={getTeam(m.home)?.logo} alt={m.home} className={`team-logo ${getTeam(m.home)?.logoClass || ''}`} />
-              </button>
+              <div className="pick-slot">
+                <button
+                  type="button"
+                  className={`pick-logo ${m.result === 'home' ? 'active' : ''}`}
+                  title={`${m.home} vence`}
+                  onClick={() => onUpdateMatch(m.id, { result: m.result === 'home' ? '' : 'home' })}
+                >
+                  <img src={getTeam(m.home)?.logo} alt={m.home} className={`team-logo ${getTeam(m.home)?.logoClass || ''}`} />
+                </button>
+                <span className="pick-slot-name">{m.home}</span>
+              </div>
               <button
                 type="button"
                 className={`pick-draw ${m.result === 'draw' ? 'active' : ''}`}
@@ -234,14 +245,17 @@ function RugbyEditor({ state, onUpdateMatch, onSetFinals }) {
               >
                 =
               </button>
-              <button
-                type="button"
-                className={`pick-logo ${m.result === 'away' ? 'active' : ''}`}
-                title={`${m.away} vence`}
-                onClick={() => onUpdateMatch(m.id, { result: m.result === 'away' ? '' : 'away' })}
-              >
-                <img src={getTeam(m.away)?.logo} alt={m.away} className={`team-logo ${getTeam(m.away)?.logoClass || ''}`} />
-              </button>
+              <div className="pick-slot">
+                <button
+                  type="button"
+                  className={`pick-logo ${m.result === 'away' ? 'active' : ''}`}
+                  title={`${m.away} vence`}
+                  onClick={() => onUpdateMatch(m.id, { result: m.result === 'away' ? '' : 'away' })}
+                >
+                  <img src={getTeam(m.away)?.logo} alt={m.away} className={`team-logo ${getTeam(m.away)?.logoClass || ''}`} />
+                </button>
+                <span className="pick-slot-name">{m.away}</span>
+              </div>
             </div>
           </div>
         ))}
@@ -269,23 +283,29 @@ function JiuJitsuEditor({ state, onUpdateMatch }) {
         {state.matches.map((m) => (
           <div key={m.id} className="jj-card" title={`${m.home} x ${m.away}`}>
             <div className="rugby-picks jj-picks">
-              <button
-                type="button"
-                className={`pick-logo ${m.result === 'home' ? 'active' : ''}`}
-                title={`${m.home} vence`}
-                onClick={() => onUpdateMatch(m.id, { result: m.result === 'home' ? '' : 'home' })}
-              >
-                <img src={getTeam(m.home)?.logo} alt={m.home} className={`team-logo ${getTeam(m.home)?.logoClass || ''}`} />
-              </button>
+              <div className="pick-slot">
+                <button
+                  type="button"
+                  className={`pick-logo ${m.result === 'home' ? 'active' : ''}`}
+                  title={`${m.home} vence`}
+                  onClick={() => onUpdateMatch(m.id, { result: m.result === 'home' ? '' : 'home' })}
+                >
+                  <img src={getTeam(m.home)?.logo} alt={m.home} className={`team-logo ${getTeam(m.home)?.logoClass || ''}`} />
+                </button>
+                <span className="pick-slot-name">{m.home}</span>
+              </div>
               <span className="pick-vs">x</span>
-              <button
-                type="button"
-                className={`pick-logo ${m.result === 'away' ? 'active' : ''}`}
-                title={`${m.away} vence`}
-                onClick={() => onUpdateMatch(m.id, { result: m.result === 'away' ? '' : 'away' })}
-              >
-                <img src={getTeam(m.away)?.logo} alt={m.away} className={`team-logo ${getTeam(m.away)?.logoClass || ''}`} />
-              </button>
+              <div className="pick-slot">
+                <button
+                  type="button"
+                  className={`pick-logo ${m.result === 'away' ? 'active' : ''}`}
+                  title={`${m.away} vence`}
+                  onClick={() => onUpdateMatch(m.id, { result: m.result === 'away' ? '' : 'away' })}
+                >
+                  <img src={getTeam(m.away)?.logo} alt={m.away} className={`team-logo ${getTeam(m.away)?.logoClass || ''}`} />
+                </button>
+                <span className="pick-slot-name">{m.away}</span>
+              </div>
             </div>
           </div>
         ))}
@@ -300,15 +320,16 @@ function XadrezDisplay({ state }) {
       <h3>Ranking Final do Xadrez</h3>
       <p className="ranking-desc">Ranking definido como final - sem alterações possíveis</p>
       <div className="xadrez-grid blocks">
-        {state.ranking.map((row, idx) => (
-          <div
-            key={row.teamName}
-            className="xadrez-row block"
-          >
-            <span>{idx + 1}º</span>
-            <span>{row.teamName}</span>
-          </div>
-        ))}
+        {state.ranking.map((row, idx) => {
+          const t = getTeam(row.teamName)
+          return (
+            <div key={row.teamName} className="xadrez-row block">
+              <span className="block-pos">{idx + 1}º</span>
+              <img src={t?.logo} alt="" className={`block-logo ${t?.logoClass || ''}`} />
+              <span className="block-name">{row.teamName}</span>
+            </div>
+          )
+        })}
       </div>
     </div>
   )
@@ -319,8 +340,10 @@ function NatacaoEditor({ state, onStartDrag, onDropAt, draggingTeam, onMoveUp, o
     <div className="ranking-panel special-panel">
       <h3>Ranking em blocos</h3>
       <p className="ranking-desc">Use os botões ↑↓ para reordenar ou arraste no desktop.</p>
-      <div className="xadrez-grid blocks">
-        {state.ranking.map((row, idx) => (
+      <div className="xadrez-grid blocks natacao">
+        {state.ranking.map((row, idx) => {
+          const t = getTeam(row.teamName)
+          return (
           <div
             key={row.teamName}
             className={`xadrez-row block ${draggingTeam === row.teamName ? 'dragging' : ''}`}
@@ -330,8 +353,9 @@ function NatacaoEditor({ state, onStartDrag, onDropAt, draggingTeam, onMoveUp, o
             onDrop={() => onDropAt(idx)}
             title="Arraste para reordenar"
           >
-            <span>{idx + 1}º</span>
-            <span>{row.teamName}</span>
+            <span className="block-pos">{idx + 1}º</span>
+            <img src={t?.logo} alt="" className={`block-logo ${t?.logoClass || ''}`} />
+            <span className="block-name">{row.teamName}</span>
             <div className="move-buttons">
               <button
                 type="button"
@@ -363,7 +387,8 @@ function NatacaoEditor({ state, onStartDrag, onDropAt, draggingTeam, onMoveUp, o
               </button>
             </div>
           </div>
-        ))}
+          )
+        })}
       </div>
     </div>
   )
@@ -520,6 +545,7 @@ function App() {
   const [savedScenarios, setSavedScenarios] = useState(() => readSavedScenarios())
   const [scenarioName, setScenarioName] = useState('')
   const [selectedScenarioId, setSelectedScenarioId] = useState('')
+  const [scenarioOpen, setScenarioOpen] = useState(false)
 
   const closeIntro = useCallback(() => {
     setShowIntro(false)
@@ -677,7 +703,7 @@ function App() {
           <div className="logo"><img src="/econologo.png" alt="ECONO 2026" className="logo-img" /></div>
           <div className="header-center">
             <p className="subtitle">Controle de resultados</p>
-            <div className="champion-badge">Campeão atual do ranking: <strong>{champion || '—'}</strong></div>
+            <div className="champion-badge"><span className="badge-label">Campeão: </span><strong>{champion || '—'}</strong></div>
             <a
               href="https://github.com/jhonatanrlp"
               className="creator-link"
@@ -713,18 +739,28 @@ function App() {
 
         <main className="main">
           <div className="main-inner">
-            <h1 className="page-title">{modality.fullName}</h1>
-            <div className="scenario-bar">
+            <div className="page-header">
+              <h1 className="page-title">{modality.fullName}</h1>
+              <button
+                type="button"
+                className="scenario-toggle"
+                onClick={() => setScenarioOpen((v) => !v)}
+                aria-expanded={scenarioOpen}
+              >
+                Cenários {scenarioOpen ? '▲' : '▼'}
+              </button>
+            </div>
+            <div className={`scenario-bar${scenarioOpen ? ' open' : ''}`}>
               <input
                 type="text"
                 className="scenario-input"
-                placeholder="Nome do cenario (ex: realista)"
+                placeholder="Nome do cenário (ex: realista)"
                 value={scenarioName}
                 onChange={(e) => setScenarioName(e.target.value)}
               />
               <button type="button" className="scenario-btn" onClick={handleSaveScenario}>Salvar</button>
               <select className="scenario-select" value={selectedScenarioId} onChange={(e) => setSelectedScenarioId(e.target.value)}>
-                <option value="">Cenarios salvos</option>
+                <option value="">Cenários salvos</option>
                 {savedScenarios.map((s) => (
                   <option key={s.id} value={s.id}>{s.name}</option>
                 ))}
