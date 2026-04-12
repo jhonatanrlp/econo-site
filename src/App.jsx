@@ -105,7 +105,7 @@ function IntroModal({ onClose }) {
           <p><strong>Chaveamento:</strong> modalidades tradicionais usam quartas, semis e final. Clique no logo do vencedor para avançar.</p>
           <p><strong>Jiu-Jitsu:</strong> todos contra todos, com seleção de vencedor pelas fotinhas (sem empate).</p>
           <p><strong>Rugby:</strong> fase de grupos com fotinhas dos times e empate no meio; depois final e disputa de 3º.</p>
-          <p><strong>Xadrez:</strong> ranking em blocos arrastáveis (arraste para ordenar do 1º ao 8º).</p>
+          <p><strong>Xadrez e Natação:</strong> ranking em blocos (arraste no desktop ou use ↑↓ no celular para ordenar do 1º ao 8º).</p>
           <p><strong>Reiniciar</strong> zera todos os resultados.</p>
         </div>
         <p className="intro-hint">Clique fora ou no × para fechar</p>
@@ -314,11 +314,11 @@ function XadrezDisplay({ state }) {
   )
 }
 
-function NatacaoEditor({ state, onStartDrag, onDropAt, draggingTeam }) {
+function NatacaoEditor({ state, onStartDrag, onDropAt, draggingTeam, onMoveUp, onMoveDown }) {
   return (
     <div className="ranking-panel special-panel">
       <h3>Ranking em blocos</h3>
-      <p className="ranking-desc">Segure e arraste as equipes para ordenar do 1º ao 8º.</p>
+      <p className="ranking-desc">Use os botões ↑↓ para reordenar ou arraste no desktop.</p>
       <div className="xadrez-grid blocks">
         {state.ranking.map((row, idx) => (
           <div
@@ -332,7 +332,36 @@ function NatacaoEditor({ state, onStartDrag, onDropAt, draggingTeam }) {
           >
             <span>{idx + 1}º</span>
             <span>{row.teamName}</span>
-            <span className="drag-handle">≡</span>
+            <div className="move-buttons">
+              <button
+                type="button"
+                className="move-btn up"
+                onPointerDown={(e) => {
+                  e.preventDefault()
+                  e.stopPropagation()
+                  onMoveUp(row.teamName)
+                }}
+                onDragStart={(e) => e.preventDefault()}
+                disabled={idx === 0}
+                title="Mover para cima"
+              >
+                ↑
+              </button>
+              <button
+                type="button"
+                className="move-btn down"
+                onPointerDown={(e) => {
+                  e.preventDefault()
+                  e.stopPropagation()
+                  onMoveDown(row.teamName)
+                }}
+                onDragStart={(e) => e.preventDefault()}
+                disabled={idx === state.ranking.length - 1}
+                title="Mover para baixo"
+              >
+                ↓
+              </button>
+            </div>
           </div>
         ))}
       </div>
@@ -552,6 +581,30 @@ function App() {
     setDraggingTeam('')
   }
 
+  const handleNatacaoMoveUp = (teamName) => {
+    setModalityState((prev) => {
+      const ranking = [...prev[activeModality].ranking]
+      const idx = ranking.findIndex((r) => r.teamName === teamName)
+      if (idx <= 0) return { ...prev }
+      const temp = ranking[idx - 1]
+      ranking[idx - 1] = ranking[idx]
+      ranking[idx] = temp
+      return { ...prev, [activeModality]: { ...prev[activeModality], ranking: [...ranking], touched: true } }
+    })
+  }
+
+  const handleNatacaoMoveDown = (teamName) => {
+    setModalityState((prev) => {
+      const ranking = [...prev[activeModality].ranking]
+      const idx = ranking.findIndex((r) => r.teamName === teamName)
+      if (idx < 0 || idx >= ranking.length - 1) return { ...prev }
+      const temp = ranking[idx]
+      ranking[idx] = ranking[idx + 1]
+      ranking[idx + 1] = temp
+      return { ...prev, [activeModality]: { ...prev[activeModality], ranking: [...ranking], touched: true } }
+    })
+  }
+
   const handleReset = () => {
     setModalityState(createEmptyAppState())
   }
@@ -702,6 +755,8 @@ function App() {
                   draggingTeam={draggingTeam}
                   onStartDrag={setDraggingTeam}
                   onDropAt={handleNatacaDropAt}
+                  onMoveUp={handleNatacaoMoveUp}
+                  onMoveDown={handleNatacaoMoveDown}
                 />
               )}
             </div>

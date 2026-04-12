@@ -796,13 +796,46 @@
 }
 
 .xadrez-grid.blocks .block {
-  grid-template-columns: 40px 1fr 24px;
+  grid-template-columns: 40px 1fr 60px;
   cursor: grab;
   user-select: none;
 }
 
 .xadrez-grid.blocks .block.dragging {
   opacity: 0.55;
+}
+
+.move-buttons {
+  display: flex;
+  gap: 2px;
+}
+
+.move-btn {
+  width: 32px;
+  height: 32px;
+  border: 2px solid var(--line);
+  border-radius: 6px;
+  background: var(--surface);
+  color: var(--ink);
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s, border-color 0.2s;
+  position: relative;
+  z-index: 10;
+}
+
+.move-btn:hover:not(:disabled) {
+  background: var(--brand-soft);
+  border-color: var(--brand);
+}
+
+.move-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
 }
 
 .drag-handle {
