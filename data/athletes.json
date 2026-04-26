@@ -1,0 +1,47 @@
+[
+  {
+    "id": "a1",
+    "nome": "Lucas Mendes",
+    "cpf": "11122233344",
+    "modalidade": "futsal-m",
+    "equipe": "insper",
+    "foto": null,
+    "status": "ativo"
+  },
+  {
+    "id": "a2",
+    "nome": "Ana Souza",
+    "cpf": "22233344455",
+    "modalidade": "volei-f",
+    "equipe": "insper",
+    "foto": null,
+    "status": "pendente"
+  },
+  {
+    "id": "a3",
+    "nome": "Pedro Alves",
+    "cpf": "33344455566",
+    "modalidade": "basquete-m",
+    "equipe": "insper",
+    "foto": null,
+    "status": "ativo"
+  },
+  {
+    "id": "a4",
+    "nome": "Julia Costa",
+    "cpf": "44455566677",
+    "modalidade": "handebol-f",
+    "equipe": "insper",
+    "foto": null,
+    "status": "inscrito"
+  },
+  {
+    "id": "a5",
+    "nome": "Rafael Lima",
+    "cpf": "55566677788",
+    "modalidade": "natacao",
+    "equipe": "insper",
+    "foto": null,
+    "status": "ativo"
+  }
+]

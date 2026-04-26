@@ -4,32 +4,20 @@ import cors from "cors";
 
 import authRouter from "./routes/auth";
 import athletesRouter from "./routes/athletes";
-import modalidadesRouter from "./routes/modalidades";
-import competicoesRouter from "./routes/competicoes";
+import competitionsRouter from "./routes/competitions";
 
 const app = express();
 const PORT = process.env.PORT ?? 3001;
 
-// ---- Middleware ----
-app.use(cors({ origin: process.env.ALLOWED_ORIGIN ?? "http://localhost:5173" }));
+app.use(cors({ origin: process.env.ALLOWED_ORIGIN ?? "http://localhost:8080" }));
 app.use(express.json());
 
-// ---- Routes ----
-app.use("/api/login", authRouter);
-app.use("/api/athletes", athletesRouter);
-app.use("/api/modalidades", modalidadesRouter);
-app.use("/api/competicoes", competicoesRouter);
+app.use("/api/login",        authRouter);
+app.use("/api/athletes",     athletesRouter);
+app.use("/api/competitions", competitionsRouter);
 
-// ---- Health check ----
-app.get("/api/health", (_req, res) => {
-  res.json({ ok: true, ts: new Date().toISOString() });
-});
+app.get("/api/health", (_req, res) => res.json({ ok: true }));
 
-// ---- 404 catch-all ----
-app.use((_req, res) => {
-  res.status(404).json({ success: false, message: "Rota não encontrada" });
-});
+app.use((_req, res) => res.status(404).json({ ok: false, message: "Rota não encontrada" }));
 
-app.listen(PORT, () => {
-  console.log(`[backend] running on http://localhost:${PORT}`);
-});
+app.listen(PORT, () => console.log(`backend → http://localhost:${PORT}`));

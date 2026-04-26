@@ -1,0 +1,9 @@
+[
+  { "athleteId": "a1", "competitionId": "ndu-2026",  "status": "inscrito" },
+  { "athleteId": "a1", "competitionId": "econo-2026","status": "inscrito" },
+  { "athleteId": "a2", "competitionId": "ndu-2026",  "status": "pendente" },
+  { "athleteId": "a3", "competitionId": "ndu-2026",  "status": "inscrito" },
+  { "athleteId": "a3", "competitionId": "fupe-2026", "status": "inscrito" },
+  { "athleteId": "a4", "competitionId": "ndu-2026",  "status": "inscrito" },
+  { "athleteId": "a5", "competitionId": "ndu-2026",  "status": "inscrito" }
+]

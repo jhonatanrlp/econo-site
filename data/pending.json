@@ -1,0 +1,5 @@
+[
+  { "athleteId": "a2", "tipo": "pagamento", "descricao": "Mensalidade Abr/2026 em aberto",     "status": "pendente" },
+  { "athleteId": "a2", "tipo": "exame",     "descricao": "Atestado médico vencido",             "status": "pendente" },
+  { "athleteId": "a1", "tipo": "documento", "descricao": "RG/CPF não cadastrado no sistema NDU","status": "pendente" }
+]

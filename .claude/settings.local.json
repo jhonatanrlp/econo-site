@@ -1,0 +1,34 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run:*)",
+      "Bash(gh repo *)",
+      "Bash(gh api *)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:api.github.com)",
+      "Read(//tmp/**)",
+      "Read(//c/Users/jhona/AppData/Local/Temp/insper-unleashed-vibe/**)",
+      "Bash(grep -E \"\\\\.tsx$\")",
+      "Bash(mkdir -p C:/Users/jhona/Documents/econo/frontend/src/modules/econo/components)",
+      "Bash(mkdir -p C:/Users/jhona/Documents/econo/frontend/src/modules/econo/data)",
+      "Bash(mkdir -p C:/Users/jhona/Documents/econo/backend/src/routes)",
+      "Bash(mkdir -p C:/Users/jhona/Documents/econo/backend/src/services)",
+      "Bash(mkdir -p C:/Users/jhona/Documents/econo/backend/src/middleware)",
+      "Bash(npm install *)",
+      "Bash(npx tsc *)",
+      "Bash(git commit -m ' *)",
+      "Bash(code *)",
+      "Bash(cat)",
+      "Bash(chmod +x /tmp/check_imports.sh)",
+      "Bash(bash /tmp/check_imports.sh)",
+      "Bash(rm -rf src/ dist/ index.html vite.config.js eslint.config.js package-lock.json)",
+      "Bash(rm -f frontend/components.json)",
+      "Bash(rm -rf frontend/src/test/)",
+      "Bash(mkdir -p scripts/ndu data)",
+      "Bash(mv ndu/extracao_dados.py scripts/ndu/)",
+      "Bash(mv ndu/lista_de_atletass.ipynb scripts/ndu/)",
+      "Bash(mv ndu/atletas_modalidades_ndu.csv scripts/ndu/)",
+      "Bash(mv ndu/atletas_modalidades_ndu.xlsx scripts/ndu/)"
+    ]
+  }
+}
